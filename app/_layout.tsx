@@ -22,6 +22,7 @@ export default function RootLayout() {
             <KeyboardProvider>
                 <Stack initialRouteName="login">
                     <Stack.Screen name="login" options={{ headerShown: false }} />
+                    <Stack.Screen name="home" options={{ headerShown: false }} />
                     <Stack.Screen name="(tabs)" redirect options={{ headerShown: false }} />
                 </Stack>
                 <StatusBar style="auto" />

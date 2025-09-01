@@ -1,14 +1,43 @@
 import {BaseScreen} from '@/components/ui/BaseScreen';
 import {Colors} from '@/constants/Colors';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import {useCallback, useState} from 'react';
+import {useRouter} from 'expo-router';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
+/*
+ * UC = Uncomment
+ * CO = Comment
+ */
+
 export default function Login() {
+    const router = useRouter();
     const [documentNo, setDocumentNo] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const handleSignIn = useCallback(() => {}, []);
+    const [user, setUser] = useState<any>(null);
+    // const user = useAuthListener(); // UC
+    const handleSignIn = useCallback(async () => {
+        try {
+            setUser({}); // Dummy data, CO
+            // const token = await getFirebaseToken('', ''); // UC
+            // await loginWithCustomToken(token); // UC
+        } catch (error) {
+            // console.log('Error logging in', error);
+        }
+    }, []);
+
+    const shouldDisableLogin = useMemo(() => !password || !documentNo, [password, documentNo]);
+
+    // Comment this to prevent auto-navigation
+    useEffect(() => {
+        if (user) {
+            router.replace({
+                pathname: '/home',
+                params: { token: 'user.token' },
+            });
+        }
+    }, [router, user]);
 
     return (
         <BaseScreen>
@@ -44,7 +73,11 @@ export default function Login() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <TouchableOpacity onPress={handleSignIn} style={styles.signIn}>
+                <TouchableOpacity
+                    disabled={shouldDisableLogin}
+                    onPress={handleSignIn}
+                    style={styles.signIn}
+                >
                     <Text style={styles.signInText}>Iniciar Sesión</Text>
                 </TouchableOpacity>
             </View>
@@ -69,7 +102,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
         color: Colors.light.text,
-        flex: 1,
+        flexGrow: 1,
     },
     inputsContainer: {
         gap: 16,
@@ -79,7 +112,6 @@ const styles = StyleSheet.create({
     passwordWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
     },
     signIn: {
         backgroundColor: '#2112c9',

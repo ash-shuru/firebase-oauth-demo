@@ -19,7 +19,7 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 export async function getFirebaseToken(username: string, password: string) {
-    // const response = await fetch('https://dev-id.rnpn.gob.sv/login', { // TODO: Commented to prevent invalid credentials error
+    // const response = await fetch('https://dev-id.rnpn.gob.sv/login', { //TODO: Commented to prevent invalid credentials error
     //     method: 'POST',
     //     headers: {'Content-Type': 'application/json'},
     //     body: JSON.stringify({username, password}),
@@ -29,7 +29,7 @@ export async function getFirebaseToken(username: string, password: string) {
 }
 
 export async function loginWithCustomToken(token: string) {
-    // const result = await signInWithCustomToken(auth, token);  // TODO: Commented to prevent invalid credentials error
+    // const result = await signInWithCustomToken(auth, token);  //TODO: Commented to prevent invalid credentials error
     // //    //Set token in secure storage
     // //    await SecureStore.setItemAsync('firebaseToken', token);
     // return result.user;

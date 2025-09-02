@@ -1,39 +1,34 @@
 import {BaseScreen} from '@/components/ui/BaseScreen';
 import {Colors} from '@/constants/Colors';
+import {useAuthListener} from '@/hooks/useAuthListener';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {useRouter} from 'expo-router';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-
-/*
- * UC = Uncomment
- * CO = Comment
- */
 
 export default function Login() {
     const router = useRouter();
     const [documentNo, setDocumentNo] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [user, setUser] = useState<any>(null);
-    // const user = useAuthListener(); // UC
+    const { user, federatedSignIn } = useAuthListener();
     const handleSignIn = useCallback(async () => {
         try {
-            setUser({}); // Dummy data, CO
-            // const token = await getFirebaseToken('', ''); // UC
-            // await loginWithCustomToken(token); // UC
+            // 
         } catch (error) {
             // console.log('Error logging in', error);
         }
     }, []);
 
     const handleFederatedSignIn = async () => {
-        // UC
-        // try {
-        //     const response = await federatedSignIn();
-        //     // We can listen to auth changes with the hook we have 'useAuthListener'.
-        //     // The User object we get from the hook also provides the idToken.
-        // } catch (error) {}
+        try {
+            const response = await federatedSignIn();
+            console.log('response', response);
+            // We can listen to auth changes with the hook we have 'useAuthListener'.
+            // The User object we get from the hook also provides the idToken.
+        } catch (error) {
+            console.log('Error', error);
+        }
     };
 
     const shouldDisableLogin = useMemo(() => !password || !documentNo, [password, documentNo]);

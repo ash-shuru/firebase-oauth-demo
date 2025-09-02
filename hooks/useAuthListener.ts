@@ -1,5 +1,5 @@
 // useAuth.ts
-import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
+import {FirebaseAuthTypes, getAuth, onAuthStateChanged, signInWithCustomToken} from "@react-native-firebase/auth";
 import * as AuthSession from "expo-auth-session";
 import {useEffect, useState} from "react";
 
@@ -43,7 +43,7 @@ export const useAuthListener = () => {
           const {firebaseToken} = await res.json();
 
           // Sign in with Firebase
-          await auth().signInWithCustomToken(firebaseToken);
+          await signInWithCustomToken(getAuth(), firebaseToken);
           /**
            * TODO: 'signInWithCredential' is most likely for built-in auth
            * providers (google, apple...). Since we're not using those,
@@ -59,7 +59,7 @@ export const useAuthListener = () => {
 
   // Auth state listener.
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(setUser);
+    const unsubscribe = onAuthStateChanged(getAuth(), setUser);
     return unsubscribe;
   }, []);
 

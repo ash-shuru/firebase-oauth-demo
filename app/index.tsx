@@ -27,6 +27,15 @@ export default function Login() {
         }
     }, []);
 
+    const handleFederatedSignIn = async () => {
+        // UC
+        // try {
+        //     const response = await federatedSignIn();
+        //     // We can listen to auth changes with the hook we have 'useAuthListener'.
+        //     // The User object we get from the hook also provides the idToken.
+        // } catch (error) {}
+    };
+
     const shouldDisableLogin = useMemo(() => !password || !documentNo, [password, documentNo]);
 
     // Comment this to prevent auto-navigation
@@ -79,6 +88,9 @@ export default function Login() {
                     style={styles.signIn}
                 >
                     <Text style={styles.signInText}>Iniciar Sesión</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleFederatedSignIn} style={styles.signIn}>
+                    <Text style={styles.signInText}>Federated sign in</Text>
                 </TouchableOpacity>
             </View>
         </BaseScreen>

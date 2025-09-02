@@ -1,5 +1,5 @@
 // useAuth.ts
-import {FirebaseAuthTypes, getAuth, onAuthStateChanged, signInWithCustomToken} from "@react-native-firebase/auth";
+import {FirebaseAuthTypes, getAuth, onIdTokenChanged, signInWithCustomToken} from "@react-native-firebase/auth";
 import * as AuthSession from "expo-auth-session";
 import {useEffect, useState} from "react";
 
@@ -8,6 +8,7 @@ const _auth0endPoint = 'https://api.example.com/auth/login';// TODO: Auth0 endpo
 
 export const useAuthListener = () => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [idToken, setIdToken] = useState<string | null>(null);
   const redirectUri = AuthSession.makeRedirectUri({
     path: "auth", // ===> firebaseoauthdemo://auth (configured in app.json)
   });
@@ -59,12 +60,25 @@ export const useAuthListener = () => {
 
   // Auth state listener.
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), setUser);
+    // const unsubscribe = onAuthStateChanged(getAuth(), setUser); // Only captures auth state change, if we need that
+    const unsubscribe = onIdTokenChanged(getAuth(), async (user) => {
+      setUser(user);
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          setIdToken(token);
+        } catch (error) {
+          setIdToken(null);
+        }
+      } else {
+        setIdToken(null);
+      }
+    });
     return unsubscribe;
   }, []);
 
   return {
-    user, federatedSignIn: async () => {
+    user, idToken, federatedSignIn: async () => {
       if (request) {
         await promptAsync();
       };

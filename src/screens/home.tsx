@@ -1,15 +1,19 @@
 import {BaseScreen} from '@/components/ui/BaseScreen';
 import {Colors} from '@/constants/Colors';
-import {useLocalSearchParams} from 'expo-router';
+import {StackScreenProps} from '@react-navigation/stack';
 import {StyleSheet, Text, View} from 'react-native';
+import {RootStackParamList, StackScreens} from '../navigation/navigation.types';
 
-export default function Home() {
-    const route = useLocalSearchParams();
+export type HomeScreenProps = StackScreenProps<RootStackParamList, StackScreens.Home>;
+
+
+export const Home = ({route}: HomeScreenProps) => {
+    const {token} = route?.params || {};
     return (
         <BaseScreen>
             <View style={styles.container}>
                 <Text>Logged in successfully</Text>
-                <Text>Token: {route.token}</Text>
+                <Text>Token: {token}</Text>
             </View>
         </BaseScreen>
     );

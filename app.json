@@ -36,11 +36,6 @@
       "package": "com.shuru.firebaseoauthdemo",
       "googleServicesFile": "./google-services.json"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
@@ -52,7 +47,6 @@
           }
         }
       ],
-      "expo-router",
       [
         "expo-splash-screen",
         {

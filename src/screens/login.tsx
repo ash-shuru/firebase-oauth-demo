@@ -1,20 +1,23 @@
 import {BaseScreen} from '@/components/ui/BaseScreen';
 import {Colors} from '@/constants/Colors';
-import {useAuthListener} from '@/hooks/useAuthListener';
+import {useAuthListener} from '@/src/hooks/useAuthListener';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import {useRouter} from 'expo-router';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
-export default function Login() {
-    const router = useRouter();
+import {RootStackParamList, StackScreens} from '@/src/navigation/navigation.types';
+import {StackScreenProps} from '@react-navigation/stack';
+
+export type LoginScreenProps = StackScreenProps<RootStackParamList, StackScreens.Login>;
+
+export const Login = ({ navigation }: LoginScreenProps) => {
     const [documentNo, setDocumentNo] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { user, federatedSignIn } = useAuthListener();
     const handleSignIn = useCallback(async () => {
         try {
-            // 
+            //
         } catch (error) {
             // console.log('Error logging in', error);
         }
@@ -36,12 +39,15 @@ export default function Login() {
     // Comment this to prevent auto-navigation
     useEffect(() => {
         if (user) {
-            router.replace({
-                pathname: '/home',
-                params: { token: 'user.token' },
+            navigation.navigate(StackScreens.Home, {
+                token: 'user.token',
             });
+            // router.replace({
+            //     pathname: '/home',
+            //     params: { token: 'user.token' },
+            // });
         }
-    }, [router, user]);
+    }, [navigation, user]);
 
     return (
         <BaseScreen>

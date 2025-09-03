@@ -1,10 +1,12 @@
 // useAuth.ts
+import {expoSecureStorage} from "@/lib/expoSecureStorage";
+import {setSecureItem, StorageKeys} from "@/lib/storage";
 import {FirebaseAuthTypes, getAuth, onIdTokenChanged, signInWithCustomToken} from "@react-native-firebase/auth";
 import * as AuthSession from "expo-auth-session";
 import {useEffect, useState} from "react";
 
 const _backendUrl = "https://mf.com/auth/exchange"; // TODO:
-const _auth0endPoint = 'https://api.example.com/auth/login';// TODO: Auth0 endpoint
+const _authEndPoint = 'https://api.example.com/auth/login';// TODO: Auth0 endpoint
 
 export const useAuthListener = () => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
@@ -20,7 +22,7 @@ export const useAuthListener = () => {
       scopes: ["openid", "profile", "email"],
     },
     {
-      authorizationEndpoint: _auth0endPoint,
+      authorizationEndpoint: _authEndPoint,
     }
   );
 
@@ -66,6 +68,7 @@ export const useAuthListener = () => {
       if (user) {
         try {
           const token = await user.getIdToken();
+          await setSecureItem(expoSecureStorage, StorageKeys.ID_TOKEN, token);
           setIdToken(token);
         } catch (error) {
           setIdToken(null);

@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.shuru.firebaseoauthdemo"
+      "bundleIdentifier": "com.shuru.firebaseoauthdemo",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "intentFilters": [
@@ -59,7 +62,13 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow the app to access your Face ID biometric data."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

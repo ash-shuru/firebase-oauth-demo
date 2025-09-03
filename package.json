@@ -11,7 +11,7 @@
     "lint": "expo lint",
     "adb": "adb reverse tcp:8081 tcp:8081",
     "android:newarch": "cd android && gradlew generateCodegenArtifactsFromSchema && gradlew clean && cd .. && npx expo run:android",
-    "prebuild:android": "npx expo prebuild --android"
+    "prebuild:android": "npx expo prebuild --platform android"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",

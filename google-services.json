@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034829160451",
+    "project_id": "modern-foundry",
+    "storage_bucket": "modern-foundry.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034829160451:android:b34353d063efe79c35ee36",
+        "android_client_info": {
+          "package_name": "com.shuru.firebaseoauthdemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzAwBV0NMjxMVgMnQ9UmpsIrxePovO6xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

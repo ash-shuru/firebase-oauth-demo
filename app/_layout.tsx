@@ -1,29 +1,49 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import {expoSecureStorage} from '@/lib/expoSecureStorage';
+import {getSecureItem, StorageKeys} from '@/lib/storage';
+import {DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {useFonts} from 'expo-font';
+import {Stack} from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import {StatusBar} from 'expo-status-bar';
+import {useEffect, useState} from 'react';
+import {KeyboardProvider} from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
+SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+    const [loaded] = useFonts({
+        SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    });
+    const [loggedIn, setIsLoggedIn] = useState(false);
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+    useEffect(() => {
+        const checkForToken = async () => {
+            const token = await getSecureItem(expoSecureStorage, StorageKeys.ID_TOKEN);
+            console.log('token', token);
+            setIsLoggedIn(!!token);
+            SplashScreen.hideAsync();
+        };
+        if (loaded) {
+            checkForToken();
+        }
+    }, [loaded]);
+    if (!loaded || loggedIn === null) {
+        // Async font loading only occurs in development.
+        return null;
+    }
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider value={DefaultTheme}>
+            <KeyboardProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen
+                        redirect={loggedIn} // Tempoary approach. We can navigate from the useEffect itself. We'll show a loader in the mean time.
+                        name="index"
+                    />
+                    <Stack.Screen name="home" />
+                </Stack>
+                <StatusBar style="dark" />
+            </KeyboardProvider>
+        </ThemeProvider>
+    );
 }

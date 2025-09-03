@@ -34,11 +34,7 @@ npm run android:newarch
 npx expo run:android
 ```
 
-3. After making changes to the native code or app.json
+3. After making changes to `app.json`
 ```bash
 npm run prebuild:android && npm run android:newarch
 ```
-
-<br/>
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-

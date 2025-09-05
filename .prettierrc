@@ -8,5 +8,8 @@
   "arrowParens": "always",
   "trailingComma": "es5",
   "printWidth": 100,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "proseWrap": "preserve",
+  "htmlWhitespaceSensitivity": "ignore",
+  "ignoreEmptyLines": true
 }

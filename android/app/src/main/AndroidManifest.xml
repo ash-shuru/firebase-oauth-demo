@@ -24,13 +24,14 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="firebaseoauthdemo"/>
+        <data android:scheme="firebaseauthdemo" android:host="dev-vtb8qagj5nmv2njj.us.auth0.com" android:pathPrefix="/android/com.shuru.firebaseoauthdemo/callback"/>
+        <data android:scheme="exp+firebase-oauth-demo"/>
       </intent-filter>
-      <intent-filter data-generated="true">
+      <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
-        <data android:scheme="firebaseoauthdemo" android:host="auth"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
         <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="exp+firebase-oauth-demo"/>
       </intent-filter>
     </activity>
   </application>

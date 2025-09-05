@@ -1,105 +1,125 @@
-import {BaseScreen} from '@/components/ui/BaseScreen';
-import {Colors} from '@/constants/Colors';
-import {useAuthListener} from '@/hooks/useAuthListener';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import {useRouter} from 'expo-router';
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+    ActivityIndicator,
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+
+import { Colors } from '@/constants/Colors';
+import * as AuthSession from 'expo-auth-session';
 
 export default function Login() {
-    const router = useRouter();
-    const [documentNo, setDocumentNo] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const { user, federatedSignIn } = useAuthListener();
-    const handleSignIn = useCallback(async () => {
+    const AUTHZERO_DOMAIN = process.env.EXPO_PUBLIC_AUTHZERO_DOMAIN;
+    const SCHEME = process.env.EXPO_PUBLIC_SCHEME;
+    const ANDROID_PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE;
+    const IOS_BUNDLE = process.env.EXPO_PUBLIC_IOS_BUNDLE;
+    const AUTHZERO_CLIENT_ID = process.env.EXPO_PUBLIC_AUTHZERO_CLIENT_ID;
+    const DUI_CONNECTION_NAME = process.env.EXPO_PUBLIC_DUI_CONNECTION_NAME;
+
+    const [loading, setLoading] = useState(false);
+
+    const signinViaOAuth2 = useCallback(async () => {
+        // 0) Ensuring env vars are set
+        if (
+            !AUTHZERO_DOMAIN ||
+            !SCHEME ||
+            !ANDROID_PACKAGE ||
+            !IOS_BUNDLE ||
+            !AUTHZERO_CLIENT_ID ||
+            !DUI_CONNECTION_NAME
+        ) {
+            console.error('Missing one or more required environment variables.');
+            return;
+        }
+
+        setLoading(true);
+
         try {
-            // 
+            // 1) Discovery
+            const discovery = {
+                authorizationEndpoint: `https://${AUTHZERO_DOMAIN}/authorize`,
+                tokenEndpoint: `https://${AUTHZERO_DOMAIN}/oauth/token`,
+            };
+
+            // 2) Platform redirecttion
+            const redirectUri =
+                Platform.OS === 'ios'
+                    ? `${SCHEME}://${AUTHZERO_DOMAIN}/ios/${IOS_BUNDLE}/callback`
+                    : `${SCHEME}://${AUTHZERO_DOMAIN}/android/${ANDROID_PACKAGE}/callback`;
+
+            // 3) Building a new request (PKCE on by default for responseType 'code')
+            const request = new AuthSession.AuthRequest({
+                clientId: AUTHZERO_CLIENT_ID,
+                redirectUri,
+                responseType: 'code',
+                scopes: ['openid', 'profile', 'email', 'offline_access'],
+                extraParams: { connection: DUI_CONNECTION_NAME },
+                // usePKCE: true, // optional - defaults to true for 'code'
+            });
+
+            await request.getAuthRequestConfigAsync();
+
+            // 4) Opening browser for Universal Login
+            const result = await request.promptAsync(discovery);
+
+            if (result.type !== 'success' || !result.params.code) {
+                console.log('Auth0 login cancelled/failed:', result);
+                setLoading(false);
+                return;
+            }
+
+            // 5) Exchanging code for tokens (no client secret)
+            const tokenResponse = await AuthSession.exchangeCodeAsync(
+                {
+                    clientId: AUTHZERO_CLIENT_ID,
+                    code: result.params.code,
+                    redirectUri,
+                    extraParams: { code_verifier: request.codeVerifier! },
+                },
+                discovery
+            );
+
+            // tokenResponse.accessToken, tokenResponse.idToken, tokenResponse.refreshToken?
+            console.log('Auth0 tokens:', tokenResponse);
         } catch (error) {
-            // console.log('Error logging in', error);
+            console.error('Error during Auth0 OAuth2 flow:', error);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
-    const handleFederatedSignIn = async () => {
-        try {
-            const response = await federatedSignIn();
-            console.log('response', response);
-            // We can listen to auth changes with the hook we have 'useAuthListener'.
-            // The User object we get from the hook also provides the idToken.
-        } catch (error) {
-            console.log('Error', error);
-        }
-    };
-
-    const shouldDisableLogin = useMemo(() => !password || !documentNo, [password, documentNo]);
-
-    // Comment this to prevent auto-navigation
-    useEffect(() => {
-        if (user) {
-            router.replace({
-                pathname: '/home',
-                params: { token: 'user.token' },
-            });
-        }
-    }, [router, user]);
-
     return (
-        <BaseScreen>
-            <View style={styles.container}>
-                <View style={styles.inputsContainer}>
-                    <View style={styles.inputWrapper}>
-                        <TextInput editable={false} style={styles.textInput} value="DUI" />
-                    </View>
-                    <View style={styles.inputWrapper}>
-                        <TextInput
-                            placeholder="Número de documento"
-                            style={styles.textInput}
-                            value={documentNo}
-                            onChangeText={setDocumentNo}
-                            placeholderTextColor={'#8A8A8A'}
-                        />
-                    </View>
-                    <View style={[styles.inputWrapper, styles.passwordWrapper]}>
-                        <TextInput
-                            placeholder="Contraseña"
-                            placeholderTextColor={'#8A8A8A'}
-                            style={styles.textInput}
-                            value={password}
-                            secureTextEntry={!showPassword}
-                            onChangeText={setPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
-                            <FontAwesome5
-                                name={showPassword ? 'eye' : 'eye-slash'}
-                                size={18}
-                                color="grey"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <TouchableOpacity
-                    disabled={shouldDisableLogin}
-                    onPress={handleSignIn}
-                    style={styles.signIn}
-                >
-                    <Text style={styles.signInText}>Iniciar Sesión</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleFederatedSignIn} style={styles.signIn}>
-                    <Text style={styles.signInText}>Federated sign in</Text>
-                </TouchableOpacity>
-            </View>
-        </BaseScreen>
+        <View style={styles.container}>
+            <TouchableOpacity disabled={loading} onPress={signinViaOAuth2} style={styles.signIn}>
+                <Text style={styles.signInText}>OAuth2 Sign-In</Text>
+            </TouchableOpacity>
+            {loading && (
+                <ActivityIndicator
+                    size="large"
+                    color={Colors.light.tint}
+                    style={styles.loadingIndicator}
+                />
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    loadingIndicator: {
+        position: 'absolute',
+        bottom: '40%',
+        alignSelf: 'center',
+    },
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.light.background,
+        backgroundColor: Colors.dark.background,
         flex: 1,
         marginVertical: 20,
-        borderRadius: 20,
+        padding: 40,
     },
     inputWrapper: {
         borderWidth: 1,

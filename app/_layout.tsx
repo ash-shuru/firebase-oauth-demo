@@ -2,10 +2,11 @@ import {expoSecureStorage} from '@/lib/expoSecureStorage';
 import {getSecureItem, StorageKeys} from '@/lib/storage';
 import {DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
+import {Stack, useRouter} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
 import {useEffect, useState} from 'react';
+import {Linking} from 'react-native';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 
@@ -15,6 +16,17 @@ export default function RootLayout() {
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
     const [loggedIn, setIsLoggedIn] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+    const subscription = Linking.addEventListener('url', ({ url }) => {
+      console.log('Redirect received:', url);
+      if(url.startsWith('firebaseauthdemo://auth')) {
+          router.replace('/home');
+      }
+    });
+    return () => subscription.remove();
+  }, [router]);
 
     useEffect(() => {
         const checkForToken = async () => {
@@ -42,7 +54,7 @@ export default function RootLayout() {
                     />
                     <Stack.Screen name="home" />
                 </Stack>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
             </KeyboardProvider>
         </ThemeProvider>
     );

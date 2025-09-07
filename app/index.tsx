@@ -49,6 +49,7 @@ export default function Login() {
             // 3) Building a new request (PKCE on by default for responseType 'code')
             const request = new AuthSession.AuthRequest({
                 clientId: AUTHZERO_CLIENT_ID,
+                // clientSecret: '' // TODO: Do we need this, too?
                 redirectUri,
                 responseType: 'code',
                 scopes: ['openid', 'profile', 'email', 'offline_access'],

@@ -1,14 +1,13 @@
-import { useCallback, useState } from 'react';
+import {useCallback, useState} from 'react';
 import {
     ActivityIndicator,
-    Platform,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import {Colors} from '@/constants/Colors';
 import * as AuthSession from 'expo-auth-session';
 
 export default function Login() {
@@ -45,14 +44,12 @@ export default function Login() {
             };
 
             // 2) Platform redirecttion
-            const redirectUri =
-                Platform.OS === 'ios'
-                    ? `${SCHEME}://${AUTHZERO_DOMAIN}/ios/${IOS_BUNDLE}/callback`
-                    : `${SCHEME}://${AUTHZERO_DOMAIN}/android/${ANDROID_PACKAGE}/callback`;
+            const redirectUri = AuthSession.makeRedirectUri({path: 'auth'});
 
             // 3) Building a new request (PKCE on by default for responseType 'code')
             const request = new AuthSession.AuthRequest({
                 clientId: AUTHZERO_CLIENT_ID,
+                // clientSecret: '' // TODO: Do we need this, too?
                 redirectUri,
                 responseType: 'code',
                 scopes: ['openid', 'profile', 'email', 'offline_access'],
@@ -118,7 +115,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: Colors.dark.background,
         flex: 1,
-        marginVertical: 20,
         padding: 40,
     },
     inputWrapper: {

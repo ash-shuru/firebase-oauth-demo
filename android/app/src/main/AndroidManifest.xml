@@ -24,7 +24,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="firebaseauthdemo" android:host="dev-vtb8qagj5nmv2njj.us.auth0.com" android:pathPrefix="/android/com.shuru.firebaseoauthdemo/callback"/>
+        <data android:scheme="firebaseauthdemo" android:host="auth"/>
         <data android:scheme="exp+firebase-oauth-demo"/>
       </intent-filter>
       <intent-filter>

@@ -1,0 +1,6 @@
+export const AUTHZERO_DOMAIN = process.env.EXPO_PUBLIC_AUTHZERO_DOMAIN;
+export const SCHEME = process.env.EXPO_PUBLIC_SCHEME;
+export const ANDROID_PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE;
+export const IOS_BUNDLE = process.env.EXPO_PUBLIC_IOS_BUNDLE;
+export const AUTHZERO_CLIENT_ID = process.env.EXPO_PUBLIC_AUTHZERO_CLIENT_ID;
+export const DUI_CONNECTION_NAME = process.env.EXPO_PUBLIC_DUI_CONNECTION_NAME;

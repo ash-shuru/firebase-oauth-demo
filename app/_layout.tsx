@@ -9,29 +9,30 @@ import {useEffect, useState} from 'react';
 import {Linking} from 'react-native';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
+import { SCHEME } from '@/constants';
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const [loaded] = useFonts({
-        SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+        SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     });
     const [loggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-    const subscription = Linking.addEventListener('url', ({ url }) => {
-      console.log('Redirect received:', url);
-      if(url.startsWith('firebaseauthdemo://auth')) {
-          router.replace('/home');
-      }
-    });
-    return () => subscription.remove();
-  }, [router]);
+        const subscription = Linking.addEventListener("url", ({ url }) => {
+            console.log("Redirect received:", url);
+            if (url.startsWith(`${SCHEME}://auth`)) {
+                router.replace("/home");
+            }
+        });
+        return () => subscription.remove();
+    }, [router]);
 
     useEffect(() => {
         const checkForToken = async () => {
             const token = await getSecureItem(expoSecureStorage, StorageKeys.ID_TOKEN);
-            console.log('token', token);
+            console.log(`token on loaded state ${loaded}:`, token);
             setIsLoggedIn(!!token);
             SplashScreen.hideAsync();
         };
@@ -39,6 +40,7 @@ export default function RootLayout() {
             checkForToken();
         }
     }, [loaded]);
+
     if (!loaded || loggedIn === null) {
         // Async font loading only occurs in development.
         return null;
@@ -50,11 +52,11 @@ export default function RootLayout() {
                 <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen
                         redirect={loggedIn} // Tempoary approach. We can navigate from the useEffect itself. We'll show a loader in the mean time.
-                        name="index"
+                        name='index'
                     />
-                    <Stack.Screen name="home" />
+                    <Stack.Screen name='home' />
                 </Stack>
-                <StatusBar style="light" />
+                <StatusBar style='light' />
             </KeyboardProvider>
         </ThemeProvider>
     );

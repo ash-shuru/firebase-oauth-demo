@@ -1,15 +1,24 @@
 {
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "bracketSpacing": true,
-  "jsxBracketSameLine": false,
-  "arrowParens": "always",
-  "trailingComma": "es5",
-  "printWidth": 100,
-  "endOfLine": "lf",
-  "proseWrap": "preserve",
-  "htmlWhitespaceSensitivity": "ignore",
-  "ignoreEmptyLines": true
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "overrides": [
+        {
+            "files": "*.{js,jsx,ts,tsx}",
+            "options": {
+                "singleQuote": false
+            }
+        }
+    ],
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "arrowParens": "always",
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "endOfLine": "lf",
+    "proseWrap": "preserve",
+    "htmlWhitespaceSensitivity": "ignore",
+    "ignoreEmptyLines": true
 }

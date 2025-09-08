@@ -18,9 +18,11 @@ import {
     IOS_BUNDLE,
     SCHEME,
 } from '@/constants';
+import {useRouter} from 'expo-router';
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const signinViaOAuth2 = useCallback(async () => {
         // 0) Ensuring env vars are set
@@ -98,6 +100,14 @@ export default function Login() {
 
             // tokenResponse.accessToken, tokenResponse.idToken, tokenResponse.refreshToken?
             console.log('Auth0 tokens:', tokenResponse);
+            if(tokenResponse?.idToken) {
+                router.replace({
+                    params: {
+                        token: tokenResponse.idToken,
+                    },
+                    pathname: '/home',
+                })
+            }
         } catch (error) {
             console.error('Error during Auth0 OAuth2 flow:', error);
         } finally {

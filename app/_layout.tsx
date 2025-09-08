@@ -23,7 +23,7 @@ export default function RootLayout() {
         const subscription = Linking.addEventListener("url", ({ url }) => {
             console.log("Redirect received:", url);
             if (url.startsWith(`${SCHEME}://auth`)) {
-                router.replace("/home");
+                router.navigate('/'); // To stay on the same screen until the token response is verified
             }
         });
         return () => subscription.remove();

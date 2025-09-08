@@ -10,14 +10,16 @@ import {
 import {Colors} from '@/constants/Colors';
 import * as AuthSession from 'expo-auth-session';
 
-export default function Login() {
-    const AUTHZERO_DOMAIN = process.env.EXPO_PUBLIC_AUTHZERO_DOMAIN;
-    const SCHEME = process.env.EXPO_PUBLIC_SCHEME;
-    const ANDROID_PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE;
-    const IOS_BUNDLE = process.env.EXPO_PUBLIC_IOS_BUNDLE;
-    const AUTHZERO_CLIENT_ID = process.env.EXPO_PUBLIC_AUTHZERO_CLIENT_ID;
-    const DUI_CONNECTION_NAME = process.env.EXPO_PUBLIC_DUI_CONNECTION_NAME;
+import {
+    ANDROID_PACKAGE,
+    AUTHZERO_CLIENT_ID,
+    AUTHZERO_DOMAIN,
+    DUI_CONNECTION_NAME,
+    IOS_BUNDLE,
+    SCHEME,
+} from '@/constants';
 
+export default function Login() {
     const [loading, setLoading] = useState(false);
 
     const signinViaOAuth2 = useCallback(async () => {
@@ -35,6 +37,7 @@ export default function Login() {
         }
 
         setLoading(true);
+        console.log('Auth0 OAuth2 flow started');
 
         try {
             // 1) Discovery
@@ -43,13 +46,22 @@ export default function Login() {
                 tokenEndpoint: `https://${AUTHZERO_DOMAIN}/oauth/token`,
             };
 
-            // 2) Platform redirecttion
-            const redirectUri = AuthSession.makeRedirectUri({path: 'auth'});
+            console.log('Auth0 discovery:', discovery);
 
-            // 3) Building a new request (PKCE on by default for responseType 'code')
+            // 2) Platform redirecttion
+            const redirectUri = AuthSession.makeRedirectUri({ 
+                scheme: SCHEME,
+                path: 'auth'
+            });
+
+            console.log('Auth0 redirect URI:', redirectUri);
+
+            /**
+             * 3) Building a new request (PKCE is on by default for responseType 'code')
+             * clientSecret will not be needed since we're using PKCE
+             */
             const request = new AuthSession.AuthRequest({
                 clientId: AUTHZERO_CLIENT_ID,
-                // clientSecret: '' // TODO: Do we need this, too?
                 redirectUri,
                 responseType: 'code',
                 scopes: ['openid', 'profile', 'email', 'offline_access'],
@@ -57,7 +69,9 @@ export default function Login() {
                 // usePKCE: true, // optional - defaults to true for 'code'
             });
 
-            await request.getAuthRequestConfigAsync();
+            const requestConfig = await request.getAuthRequestConfigAsync();
+
+            console.log('Auth0 auth config:', requestConfig);
 
             // 4) Opening browser for Universal Login
             const result = await request.promptAsync(discovery);
@@ -67,13 +81,16 @@ export default function Login() {
                 setLoading(false);
                 return;
             }
+            else {
+                console.log('Auth0 login success, code:', result.params.code);
+            }
 
             // 5) Exchanging code for tokens (no client secret)
             const tokenResponse = await AuthSession.exchangeCodeAsync(
                 {
-                    clientId: AUTHZERO_CLIENT_ID,
+                    clientId: requestConfig.clientId,
                     code: result.params.code,
-                    redirectUri,
+                    redirectUri: requestConfig.redirectUri,
                     extraParams: { code_verifier: request.codeVerifier! },
                 },
                 discovery
@@ -85,6 +102,8 @@ export default function Login() {
             console.error('Error during Auth0 OAuth2 flow:', error);
         } finally {
             setLoading(false);
+
+            console.log('Auth0 OAuth2 flow ended');
         }
     }, []);
 

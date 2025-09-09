@@ -1,0 +1,6 @@
+<original>
+https://dev-abcv.us.auth0.com/login/callback, http://localhost:3000/callback, http://127.0.0.1:3000/callback, firebaseauthdemo://dev-vtb8qagj5nmv2njj.us.auth0.com/android/com.shuru.firebaseoauthdemo/callback, firebaseauthdemo://dev-vtb8qagj5nmv2njj.us.auth0.com/ios/com.shuru.firebaseoauthdemo/callback, firebaseauthdemo://auth
+</original>
+<attempt-1>
+https://dev-vtb8qagj5nmv2njj.us.auth0.com/login/callback, http://localhost:3000/callback, http://127.0.0.1:3000/callback, firebaseauthdemo://dev-vtb8qagj5nmv2njj.us.auth0.com/android/com.shuru.firebaseoauthdemo/callback, firebaseauthdemo://dev-vtb8qagj5nmv2njj.us.auth0.com/ios/com.shuru.firebaseoauthdemo/callback, firebaseauthdemo://auth
+</attempt-1>

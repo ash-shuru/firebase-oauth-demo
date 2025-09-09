@@ -9,7 +9,8 @@ import {useEffect, useState} from 'react';
 import {Linking} from 'react-native';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
-import { SCHEME } from '@/constants';
+import { AUTHZERO_CLIENT_ID, AUTHZERO_DOMAIN, SCHEME } from '@/constants';
+import { Auth0Provider } from 'react-native-auth0';
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
@@ -50,16 +51,18 @@ export default function RootLayout() {
 
     return (
         <ThemeProvider value={DefaultTheme}>
-            <KeyboardProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen
-                        redirect={loggedIn} // Tempoary approach. We can navigate from the useEffect itself. We'll show a loader in the mean time.
-                        name='index'
-                    />
-                    <Stack.Screen name='home' />
-                </Stack>
-                <StatusBar style='light' />
-            </KeyboardProvider>
+            <Auth0Provider domain={AUTHZERO_DOMAIN!} clientId={AUTHZERO_CLIENT_ID!}>
+                <KeyboardProvider>
+                    <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen
+                            redirect={loggedIn} // Tempoary approach. We can navigate from the useEffect itself. We'll show a loader in the mean time.
+                            name='index'
+                        />
+                        <Stack.Screen name='home' />
+                    </Stack>
+                    <StatusBar style='light' />
+                </KeyboardProvider>
+            </Auth0Provider>
         </ThemeProvider>
     );
 }

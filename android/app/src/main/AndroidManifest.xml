@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -32,6 +32,14 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="exp+firebase-oauth-demo"/>
+      </intent-filter>
+    </activity>
+    <activity android:name="com.auth0.android.provider.RedirectActivity" tools:node="replace" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="com.shuru.firebaseoauthdemo.auth0" android:pathPrefix="/android/com.shuru.firebaseoauthdemo/callback" android:host="dev-vtb8qagj5nmv2njj.us.auth0.com"/>
       </intent-filter>
     </activity>
   </application>

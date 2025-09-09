@@ -57,6 +57,12 @@
                     "configureAndroidBackup": true,
                     "faceIDPermission": "Allow the app to access your Face ID biometric data."
                 }
+            ],
+            [
+                "react-native-auth0",
+                {
+                    "domain": "dev-vtb8qagj5nmv2njj.us.auth0.com"
+                }
             ]
         ],
         "experiments": {

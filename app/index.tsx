@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
     StyleSheet,
@@ -11,6 +11,7 @@ import {Colors} from '@/constants/Colors';
 import {expoSecureStorage} from '@/lib/expoSecureStorage';
 import {setSecureItem, StorageKeys} from '@/lib/storage';
 import * as AuthSession from 'expo-auth-session';
+import { useAuth0 } from 'react-native-auth0';
 
 import {
     ANDROID_PACKAGE,
@@ -24,6 +25,19 @@ import {
 export default function Login() {
     const [loading, setLoading] = useState(false);
 
+    const { authorize, user, isLoading, error } = useAuth0();
+
+    // Authorization via react-native-oauth
+    const login = useCallback(async () => {
+        try {
+            const resp = await authorize({ connection: DUI_CONNECTION_NAME, redirectUrl: `${SCHEME}://auth` });
+            console.log('RNAUTH0 Response', resp);
+        } catch (error) {
+            console.log('RNAUTH0 error', error);
+        }
+    }, []);
+
+    // Authorization via expo-auth-session
     const signinViaOAuth2 = useCallback(async () => {
         // 0) Ensuring env vars are set
         if (
@@ -51,7 +65,7 @@ export default function Login() {
             console.log('Auth0 discovery:', discovery);
 
             // 2) Platform redirecttion
-            const redirectUri = AuthSession.makeRedirectUri({ 
+            const redirectUri = AuthSession.makeRedirectUri({
                 scheme: SCHEME,
                 path: 'auth'
             });
@@ -113,11 +127,32 @@ export default function Login() {
         }
     }, []);
 
+    if (isLoading) {
+        return (
+            <View>
+                <Text>SDK is Loading</Text>
+            </View>
+        )
+    }
+
+
+
     return (
         <View style={styles.container}>
+            {/* Authorize via expo-auth-session */}
             <TouchableOpacity disabled={loading} onPress={signinViaOAuth2} style={styles.signIn}>
                 <Text style={styles.signInText}>OAuth2 Sign-In</Text>
             </TouchableOpacity>
+            {/* Authorize via expo-auth-session */}
+
+            {/* Authorize via react-native-auth0 */}
+            {!user && <TouchableOpacity disabled={loading} onPress={login} style={styles.signIn}>
+                <Text style={styles.signInText}>Auth0 lib sign in</Text>
+            </TouchableOpacity>}
+            {user && <Text>Logged in as {user.name}</Text>}
+            {error && <Text>{error.message}</Text>}
+            {/* Authorize via react-native-auth0 */}
+
             {loading && (
                 <ActivityIndicator
                     size="large"

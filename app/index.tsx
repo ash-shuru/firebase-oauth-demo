@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 
 import {Colors} from '@/constants/Colors';
+import {expoSecureStorage} from '@/lib/expoSecureStorage';
+import {setSecureItem, StorageKeys} from '@/lib/storage';
 import * as AuthSession from 'expo-auth-session';
 
 import {
@@ -64,7 +66,7 @@ export default function Login() {
                 clientId: AUTHZERO_CLIENT_ID,
                 redirectUri,
                 responseType: 'code',
-                scopes: ['openid', 'profile', 'email', 'offline_access'],
+                //scopes: ['openid', 'profile', 'email', 'offline_access'],
                 extraParams: { connection: DUI_CONNECTION_NAME },
                 // usePKCE: true, // optional - defaults to true for 'code'
             });
@@ -98,6 +100,10 @@ export default function Login() {
 
             // tokenResponse.accessToken, tokenResponse.idToken, tokenResponse.refreshToken?
             console.log('Auth0 tokens:', tokenResponse);
+            if (tokenResponse.accessToken) {
+                await setSecureItem(expoSecureStorage, StorageKeys.ID_TOKEN, tokenResponse.accessToken);
+                console.log('ID token saved to secure storage');
+            }
         } catch (error) {
             console.error('Error during Auth0 OAuth2 flow:', error);
         } finally {

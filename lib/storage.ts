@@ -10,6 +10,7 @@ export interface SecureStorage extends AppStorage {
 
 export enum StorageKeys {
   ID_TOKEN = 'id_token',
+  LOGIN = 'login',
 }
 
 

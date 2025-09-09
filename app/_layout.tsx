@@ -1,5 +1,5 @@
 import {expoSecureStorage} from '@/lib/expoSecureStorage';
-import {getSecureItem, StorageKeys} from '@/lib/storage';
+import {getSecureItem, setSecureItem, StorageKeys} from '@/lib/storage';
 import {DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
 import {Stack, useRouter} from 'expo-router';
@@ -23,6 +23,8 @@ export default function RootLayout() {
         const subscription = Linking.addEventListener("url", ({ url }) => {
             console.log("Redirect received:", url);
             if (url.startsWith(`${SCHEME}://auth`)) {
+                setSecureItem(expoSecureStorage, StorageKeys.LOGIN, "Done");
+                console.log('Login status saved to secure storage');
                 router.replace("/home");
             }
         });
@@ -31,7 +33,7 @@ export default function RootLayout() {
 
     useEffect(() => {
         const checkForToken = async () => {
-            const token = await getSecureItem(expoSecureStorage, StorageKeys.ID_TOKEN);
+            const token = await getSecureItem(expoSecureStorage, StorageKeys.LOGIN);
             console.log(`token on loaded state ${loaded}:`, token);
             setIsLoggedIn(!!token);
             SplashScreen.hideAsync();

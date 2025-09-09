@@ -1,14 +1,8 @@
-import {useCallback, useState} from 'react';
-import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import { useCallback, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import {Colors} from '@/constants/Colors';
-import * as AuthSession from 'expo-auth-session';
+import { Colors } from "@/constants/Colors";
+import * as AuthSession from "expo-auth-session";
 
 import {
     ANDROID_PACKAGE,
@@ -17,7 +11,7 @@ import {
     DUI_CONNECTION_NAME,
     IOS_BUNDLE,
     SCHEME,
-} from '@/constants';
+} from "@/constants";
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
@@ -32,12 +26,12 @@ export default function Login() {
             !AUTHZERO_CLIENT_ID ||
             !DUI_CONNECTION_NAME
         ) {
-            console.error('Missing one or more required environment variables.');
+            console.error("Missing one or more required environment variables.");
             return;
         }
 
         setLoading(true);
-        console.log('Auth0 OAuth2 flow started');
+        console.log("Auth0 OAuth2 flow started");
 
         try {
             // 1) Discovery
@@ -46,15 +40,15 @@ export default function Login() {
                 tokenEndpoint: `https://${AUTHZERO_DOMAIN}/oauth/token`,
             };
 
-            console.log('Auth0 discovery:', discovery);
+            console.log("Auth0 discovery:", discovery);
 
             // 2) Platform redirecttion
-            const redirectUri = AuthSession.makeRedirectUri({ 
+            const redirectUri = AuthSession.makeRedirectUri({
                 scheme: SCHEME,
-                path: 'auth'
+                path: "auth",
             });
 
-            console.log('Auth0 redirect URI:', redirectUri);
+            console.log("Auth0 redirect URI:", redirectUri);
 
             /**
              * 3) Building a new request (PKCE is on by default for responseType 'code')
@@ -63,26 +57,25 @@ export default function Login() {
             const request = new AuthSession.AuthRequest({
                 clientId: AUTHZERO_CLIENT_ID,
                 redirectUri,
-                responseType: 'code',
-                scopes: ['openid', 'profile', 'email', 'offline_access'],
+                responseType: "code",
+                scopes: ["openid", "profile", "email", "offline_access"],
                 extraParams: { connection: DUI_CONNECTION_NAME },
                 // usePKCE: true, // optional - defaults to true for 'code'
             });
 
             const requestConfig = await request.getAuthRequestConfigAsync();
 
-            console.log('Auth0 auth config:', requestConfig);
+            console.log("Auth0 auth config:", requestConfig);
 
             // 4) Opening browser for Universal Login
             const result = await request.promptAsync(discovery);
 
-            if (result.type !== 'success' || !result.params.code) {
-                console.log('Auth0 login cancelled/failed:', result);
+            if (result.type !== "success" || !result.params.code) {
+                console.log("Auth0 login cancelled/failed:", result);
                 setLoading(false);
                 return;
-            }
-            else {
-                console.log('Auth0 login success, code:', result.params.code);
+            } else {
+                console.log("Auth0 login success, code:", result.params.code);
             }
 
             // 5) Exchanging code for tokens (no client secret)
@@ -97,13 +90,13 @@ export default function Login() {
             );
 
             // tokenResponse.accessToken, tokenResponse.idToken, tokenResponse.refreshToken?
-            console.log('Auth0 tokens:', tokenResponse);
+            console.log("Auth0 tokens:", tokenResponse);
         } catch (error) {
-            console.error('Error during Auth0 OAuth2 flow:', error);
+            console.error("Error during Auth0 OAuth2 flow:", error);
         } finally {
             setLoading(false);
 
-            console.log('Auth0 OAuth2 flow ended');
+            console.log("Auth0 OAuth2 flow ended");
         }
     }, []);
 
@@ -114,7 +107,7 @@ export default function Login() {
             </TouchableOpacity>
             {loading && (
                 <ActivityIndicator
-                    size="large"
+                    size='large'
                     color={Colors.light.tint}
                     style={styles.loadingIndicator}
                 />
@@ -125,13 +118,13 @@ export default function Login() {
 
 const styles = StyleSheet.create({
     loadingIndicator: {
-        position: 'absolute',
-        bottom: '40%',
-        alignSelf: 'center',
+        position: "absolute",
+        bottom: "40%",
+        alignSelf: "center",
     },
     container: {
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         backgroundColor: Colors.dark.background,
         flex: 1,
         padding: 40,
@@ -149,21 +142,21 @@ const styles = StyleSheet.create({
     inputsContainer: {
         gap: 16,
         paddingHorizontal: 32,
-        width: '100%',
+        width: "100%",
     },
     passwordWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     signIn: {
-        backgroundColor: '#2112c9',
+        backgroundColor: "#2112c9",
         borderRadius: 20,
         paddingVertical: 12,
         paddingHorizontal: 20,
         marginTop: 24,
     },
     signInText: {
-        color: '#fff',
-        fontWeight: '700',
+        color: "#fff",
+        fontWeight: "700",
     },
 });
